@@ -1,0 +1,161 @@
+﻿@page "/AttrView"
+
+<PageTitle>Attr</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Single Element (QuerySelector)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="SingleValue" id="input1" Label="Input with Attribute" Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" placeholder="Enter text here" />
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="GetSingleAttr" Variant="Variant.Filled" Color="Color.Primary">
+                        Get Single Attribute
+                    </MudButton>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudText Typo="Typo.h6" Color="Color.Info">@SingleAttribute</MudText>
+                </MudItem>
+                @* ******************************* *@
+                <MudItem md="4" Class="mt-2">
+                    <MudText id="attr1" Typo="Typo.h6" Color="Color.Success">New Attribute Value</MudText>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="SetSingleAttr" Variant="Variant.Filled" Color="Color.Secondary">
+                        Set Single Attribute
+                    </MudButton>
+                </MudItem>
+                <MudItem md="4">
+                    <MudTextField id="input2" @bind-Value="SingleValue" Label="Attribute Value"
+                                  Variant="Variant.Outlined" Margin="Margin.Dense" placeholder="..." />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* ******************************* *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Multiple Elements (QuerySelectorAll)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="2">
+                    <input Label="Multiple Attributes" Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" placeholder="input3" class="attr-input" />
+                </MudItem>
+                <MudItem md="2">
+                    <input Label="Multiple Attributes" Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" placeholder="input4" class="attr-input" />
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="GetMultipleAttr" Variant="Variant.Filled" Color="Color.Primary">
+                        Get Multiple Attributes
+                    </MudButton>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudText Typo="Typo.h6" Color="Color.Info">@MultipleAttribute</MudText>
+                </MudItem>
+                @* ******************************* *@
+                <MudItem md="3" Class="mt-2">
+                    <MudText id="attr2" Typo="Typo.h6" Color="Color.Info">Set Custom Attribute</MudText>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="SetMultipleAttr" Variant="Variant.Filled" Color="Color.Secondary">
+                        Set Multiple Attributes
+                    </MudButton>
+                </MudItem>
+                <MudItem md="2">
+                    <input Label="Multiple Attributes" Variant="Variant.Outlined"
+                           Margin="Margin.Dense" class="attr-input2" />
+                </MudItem>
+                <MudItem md="2">
+                    <input Label="Multiple Attributes" Variant="Variant.Outlined"
+                           Margin="Margin.Dense" class="attr-input2" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Class="pa-4 ma-2">
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <MudAlert Severity="Severity.Success">
+                <strong>Result:</strong> @result
+            </MudAlert>
+        }
+    </MudPaper>
+</MudCard>
+
+@code {
+    private string result = string.Empty;
+
+    private string SingleAttribute = string.Empty;
+    private string MultipleAttribute = string.Empty;
+    private string SingleValue = string.Empty;
+
+    private async Task GetSingleAttr()
+    {
+        try
+        {
+            string res = await Dom.QuerySelector("#input1").AttrAsync<string>("placeholder");
+            SingleAttribute = $"Attribute value is : {res}";
+
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetSingleAttr()
+    {
+        try
+        {
+            var res = await Dom.QuerySelector("#attr1").TextAsync<string>();
+            await Dom.QuerySelector("#input2").AttrAsync("placeholder", res);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    // ***********************************************
+
+    private async Task GetMultipleAttr()
+    {
+        try
+        {
+            var res = await Dom.QuerySelectorAll(".attr-input").AttrAsync<IList<string>>("placeholder");
+            MultipleAttribute = $"Attribute values are : {string.Join(", ", res)}";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetMultipleAttr()
+    {
+        try
+        {
+            var res = await Dom.QuerySelector("#attr2").TextAsync<string>();
+            await Dom.QuerySelectorAll(".attr-input2").AttrAsync("placeholder", res);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+}

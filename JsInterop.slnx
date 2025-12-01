@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Maanfee.JsInterop.Examples/Maanfee.JsInterop.Examples.Client/Maanfee.JsInterop.Examples.Client.csproj" />
+  <Project Path="Maanfee.JsInterop.Examples/Maanfee.JsInterop.Examples/Maanfee.JsInterop.Examples.csproj" />
+  <Project Path="Maanfee.JsInterop/Maanfee.JsInterop.csproj" />
+</Solution>

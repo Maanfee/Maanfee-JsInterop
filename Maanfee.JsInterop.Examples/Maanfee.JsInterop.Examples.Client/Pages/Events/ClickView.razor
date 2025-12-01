@@ -1,0 +1,137 @@
+﻿@page "/ClickView"
+
+<PageTitle>Click</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudText Typo="Typo.h6" Color="Color.Error" Class="mb-4">Click Demo</MudText>
+
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Button Management</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <div class="d-flex flex-wrap gap-4">
+                <MudButton id="btn1" OnClick="@(() => ButtonClick("btn1"))"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           Disabled="@isProcessing">
+                    Button 1
+                </MudButton>
+
+                <MudButton id="btn2" OnClick="@(() => ButtonClick("btn2"))"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.Send"
+                           Color="Color.Primary"
+                           Disabled="@isProcessing">
+                    Button 2
+                </MudButton>
+
+                <MudButton id="btn3" OnClick="@(() => ButtonClick("btn3"))"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Custom.Uncategorized.Radioactive"
+                           Color="Color.Warning"
+                           Disabled="@isProcessing">
+                    Button 3
+                </MudButton>
+
+                <MudButton id="btn4" OnClick="@(() => ButtonClick("btn4"))"
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Mic"
+                           IconColor="Color.Error"
+                           Disabled="@isProcessing">
+                    Button 4
+                </MudButton>
+            </div>
+        </MudCardContent>
+    </MudPaper>
+
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">Actions</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudButton OnClick="ClickAllButtons" Variant="Variant.Outlined" Color="Color.Info" Class="me-2">
+                Click All Buttons
+            </MudButton>
+
+            <MudButton OnClick="ResetButtons" Variant="Variant.Outlined" Color="Color.Tertiary">
+                Reset
+            </MudButton>
+        </MudCardContent>
+    </MudPaper>
+
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudAlert Severity="@alertSeverity" Variant="Variant.Outlined">
+            @Result
+        </MudAlert>
+
+        <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined" Class="mt-2">
+            Last clicked: @lastClickedButton | Total clicks: @clickCount
+        </MudAlert>
+    </MudPaper>
+</MudCard>
+
+@code {
+    private string Result = "Click on buttons to see DOM manipulation in action";
+    private string lastClickedButton = "None";
+    private int clickCount = 0;
+    private bool isProcessing = false;
+    private Severity alertSeverity = Severity.Info;
+
+    private async Task ButtonClick(string buttonId)
+    {
+        if (isProcessing) return;
+
+        isProcessing = true;
+        lastClickedButton = buttonId;
+        clickCount++;
+
+        try
+        {
+            await Dom.QuerySelector($"#{buttonId}").ClickAsync();
+
+            Result = $"✅ {buttonId} was clicked successfully! (Simulated via JavaScript)";
+            alertSeverity = Severity.Success;
+        }
+        catch (Exception ex)
+        {
+            Result = $"❌ Error clicking {buttonId}: {ex.Message}";
+            alertSeverity = Severity.Error;
+        }
+        finally
+        {
+            isProcessing = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task ClickAllButtons()
+    {
+        var buttons = new[] { "btn1", "btn2", "btn3", "btn4" };
+
+        foreach (var buttonId in buttons)
+        {
+            await Dom.QuerySelector($"#{buttonId}").ClickAsync();
+            await Task.Delay(300); 
+        }
+
+        Result = "🎉 All buttons were clicked sequentially!";
+        alertSeverity = Severity.Warning;
+        StateHasChanged();
+    }
+
+    private void ResetButtons()
+    {
+        Result = "Click on buttons to see DOM manipulation in action";
+        lastClickedButton = "None";
+        clickCount = 0;
+        alertSeverity = Severity.Info;
+        StateHasChanged();
+    }
+
+}

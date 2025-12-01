@@ -1,0 +1,104 @@
+﻿@page "/HTMLView"
+
+<PageTitle>HTML</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Single Element (QuerySelector)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudStack Row="true">
+                <MudButton OnClick="GetSingleHTML" Variant="Variant.Filled" Color="Color.Primary">Get Single HTML</MudButton>
+                <MudButton OnClick="SetSingleHTML" Variant="Variant.Filled" Color="Color.Secondary">Set Single HTML</MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Multiple Elements (QuerySelectorAll)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudStack Row="true">
+                <MudButton OnClick="GetMultipleHTML" Variant="Variant.Filled" Color="Color.Primary">Get Multiple HTML</MudButton>
+                <MudButton OnClick="SetMultipleHTML" Variant="Variant.Filled" Color="Color.Secondary">Set Multiple HTML</MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudAlert id="content1" Severity="Severity.Info" Variant="Variant.Outlined">Content 1</MudAlert>
+        <MudAlert Class="content-item mt-2 p-2 " Severity="Severity.Success" Variant="Variant.Outlined">Item 1</MudAlert>
+        <MudAlert Class="content-item mt-2 p-2 " Severity="Severity.Warning" Variant="Variant.Outlined">Item 2</MudAlert>
+        <MudAlert Class="content-item mt-2 p-2 " Severity="Severity.Error" Variant="Variant.Outlined">Item 3</MudAlert>
+
+        @if (!string.IsNullOrEmpty(result))
+        {
+            <MudAlert Severity="Severity.Success"> <strong>Result:</strong> @result</MudAlert>
+        }
+    </MudPaper>
+</MudCard>
+
+@code {
+
+    private string result = string.Empty;
+
+    private async Task GetSingleHTML()
+    {
+        try
+        {
+            result = await Dom.QuerySelector("#content1").HTMLAsync<string>();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetSingleHTML()
+    {
+        try
+        {
+            await Dom.QuerySelector("#content1").HTMLAsync("<strong>Updated Single Content</strong>");
+            result = "Single text updated successfully!";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task GetMultipleHTML()
+    {
+        try
+        {
+            var txt = await Dom.QuerySelectorAll(".content-item").HTMLAsync<IList<string>>();
+            result = $"Multiple texts: {string.Join(", ", txt)}";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetMultipleHTML()
+    {
+        try
+        {
+            await Dom.QuerySelectorAll(".content-item").HTMLAsync("<em>Updated Item</em>");
+            result = "Multiple texts updated successfully!";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+}

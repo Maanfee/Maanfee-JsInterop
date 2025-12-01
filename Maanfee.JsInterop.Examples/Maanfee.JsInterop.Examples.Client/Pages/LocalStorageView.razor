@@ -1,0 +1,250 @@
+﻿@page "/LocalStorageView"
+
+<PageTitle>LocalStorage</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudText Typo="Typo.h6" Color="Color.Error" Class="mb-4">Local Storage Management</MudText>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Storage Information</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="12">
+                    <MudButton OnClick="GetAllKeys" Variant="Variant.Outlined" Color="Color.Info">
+                        Get All Keys
+                    </MudButton>
+                    <MudButton OnClick="GetKeyByIndex" Variant="Variant.Outlined" Color="Color.Info">
+                        Get Key by Index (0)
+                    </MudButton>
+                    <MudButton OnClick="GetLength" Variant="Variant.Outlined" Color="Color.Info">
+                        Get Length
+                    </MudButton>
+                </MudItem>
+                @if (!string.IsNullOrEmpty(Result))
+                {
+                    <MudItem md="12">
+                        <MudAlert Severity="Severity.Success">@Result</MudAlert>
+                    </MudItem>
+                }
+                @if (!string.IsNullOrEmpty(Error))
+                {
+                    <MudItem md="12">
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@Error</MudAlert>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Set Data</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="KeySet" Label="Key" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="ValueSet" Label="Value" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="4" Class="d-flex align-center">
+                    <MudButton OnClick="SetData" Variant="Variant.Filled" Color="Color.Primary" Class="mt-1">
+                        Set Data
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Get Data</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="KeyGet" Label="Key" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="4"></MudItem>
+                <MudItem md="4" Class="d-flex align-center">
+                    <MudButton OnClick="GetData" Variant="Variant.Filled" Color="Color.Primary" Class="mt-1">
+                        Get Data
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Management Operations</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="KeyRemove" Label="Key" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="4" Class="d-flex align-center">
+                    <MudButton OnClick="Remove" Variant="Variant.Filled" Color="Color.Warning" Class="mt-1">
+                        Remove Current Key
+                    </MudButton>
+                </MudItem>
+                <MudItem md="4" Class="d-flex align-center">
+                    <MudButton OnClick="ClearStorage" Variant="Variant.Filled" Color="Color.Error" Class="mt-1">
+                        Clear All Storage
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* *************************************** *@
+</MudCard>
+
+@code {
+
+    private string Result = string.Empty;
+    private string Error = string.Empty;
+    private string KeySet = string.Empty;
+    private string ValueSet = string.Empty;
+    private string KeyGet = string.Empty;
+    private string KeyRemove = string.Empty;
+
+    private async Task GetAllKeys()
+    {
+        try
+        {
+            var res = await LocalStorage.KeysAsync();
+            Result = $"Found {res.Count} keys {string.Join(", ", res)}";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error getting keys: {ex.Message}";
+        }
+    }
+
+    private async Task GetKeyByIndex()
+    {
+        try
+        {
+            var res = await LocalStorage.KeyAsync(0);
+            if (string.IsNullOrEmpty(res))
+            {
+                Result = "No key found at index 0";
+            }
+            else
+            {
+                Result = $"Key at index 0: {res}";
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error getting key by index: {ex.Message}";
+        }
+    }
+
+    private async Task GetLength()
+    {
+        try
+        {
+            var res = await LocalStorage.LengthAsync();
+            Result = $"Storage length: {res}";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error getting length: {ex.Message}";
+        }
+    }
+
+    private async Task SetData()
+    {
+        if (string.IsNullOrWhiteSpace(KeySet))
+        {
+            Error = "Key cannot be empty!";
+            return;
+        }
+
+        try
+        {
+            await LocalStorage.SetAsync(KeySet, ValueSet);
+            await GetAllKeys(); // Refresh keys list
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error setting data: {ex.Message}";
+        }
+    }
+
+    private async Task GetData()
+    {
+        if (string.IsNullOrWhiteSpace(KeyGet))
+        {
+            Error = "Please enter a key to get";
+            return;
+        }
+
+        try
+        {
+            var res = await LocalStorage.GetAsync<string>(KeyGet);
+            if (string.IsNullOrEmpty(res))
+            {
+                Error = $"No data found for key: {KeyGet}";
+            }
+            else
+            {
+                Result = $"Data retrieved for key: {KeyGet} is {res}";
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error getting data: {ex.Message}";
+        }
+    }
+
+    private async Task Remove()
+    {
+        if (string.IsNullOrWhiteSpace(KeyRemove))
+        {
+            Error = "Please enter a key to remove";
+            return;
+        }
+
+        try
+        {
+            await LocalStorage.RemoveAsync(KeyRemove);
+            await GetAllKeys(); // Refresh keys list
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error removing key: {ex.Message}";
+        }
+    }
+
+    private async Task ClearStorage()
+    {
+        try
+        {
+            await LocalStorage.ClearAsync();
+
+            await GetAllKeys(); // Refresh keys list
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error clearing storage: {ex.Message}";
+        }
+    }
+
+}

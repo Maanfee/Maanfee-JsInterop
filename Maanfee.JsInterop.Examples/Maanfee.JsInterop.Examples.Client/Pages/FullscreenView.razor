@@ -1,0 +1,79 @@
+﻿@page "/FullscreenView"
+
+<PageTitle>Fullscreen</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Fullscreen</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid id="fullscreen-container">
+                <MudItem md="4">
+                    <p>Fullscreen Status: <strong>@statusMessage</strong></p>
+                    <p>Fullscreen Element: <strong>@fullscreenElement</strong></p>
+                    <p>Error: <strong>@Error</strong></p>
+                </MudItem>
+                <MudItem md="8"></MudItem>
+                <MudItem md="12">
+                    <MudButton OnClick="EnterFullscreen" Variant="Variant.Filled" Color="Color.Success">Enter Fullscreen</MudButton>
+                    <MudButton OnClick="ExitFullscreen" Variant="Variant.Filled" Color="Color.Error">Exit Fullscreen</MudButton>
+                    <MudButton OnClick="ToggleFullscreen" Variant="Variant.Filled" Color="Color.Tertiary">Toggle Fullscreen</MudButton>
+                    <MudButton OnClick="CheckStatus" Variant="Variant.Filled" Color="Color.Warning">Check Status</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+</MudCard>
+
+@code {
+    private string statusMessage = "Unknown";
+    private string fullscreenElement = "None";
+    private string Error = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Fullscreen.FullscreenChanged += OnFullscreenChanged;
+    }
+
+    private async Task EnterFullscreen()
+    {
+        try
+        {
+            await Fullscreen.RequestFullscreenAsync("fullscreen-container");
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+        }
+    }
+
+    private async Task ExitFullscreen()
+    {
+        await Fullscreen.ExitFullscreenAsync();
+    }
+
+    private async Task ToggleFullscreen()
+    {
+        await Fullscreen.ToggleFullscreenAsync();
+    }
+
+    private async Task CheckStatus()
+    {
+        var isFs = await Fullscreen.IsFullscreenAsync();
+        statusMessage = isFs ? "Active" : "Inactive";
+
+        var element = await Fullscreen.GetFullscreenElementAsync();
+        fullscreenElement = element ?? "None";
+
+        StateHasChanged();
+    }
+
+    private void OnFullscreenChanged(object? sender, bool isFullscreen)
+    {
+        statusMessage = isFullscreen ? "Active" : "Inactive";
+        StateHasChanged();
+    }
+
+}

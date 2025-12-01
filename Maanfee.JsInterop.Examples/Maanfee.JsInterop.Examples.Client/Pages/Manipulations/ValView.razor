@@ -1,0 +1,137 @@
+﻿@page "/ValView"
+
+<PageTitle>Val</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Single Element (QuerySelector)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField id="val1" @bind-Value="Value" Label="Outlined" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="GetSingleVal" Variant="Variant.Filled" Color="Color.Primary">Get Single Val</MudButton>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudText id="content1" Typo="Typo.h6" Color="Color.Info">...</MudText>
+                </MudItem>
+                @* ******************************* *@
+                <MudItem md="4" Class="mt-2">
+                    <MudText id="content2" Typo="Typo.h6" Color="Color.Success">Content2</MudText>
+                </MudItem>
+                <MudItem md="4" Class="mt-2">
+                    <MudButton OnClick="SetSingleVal" Variant="Variant.Filled" Color="Color.Secondary">Set Single Val</MudButton>
+                </MudItem>
+                <MudItem md="4">
+                    <MudTextField id="val2" @bind-Value="Value" Label="Outlined" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+    @* ******************************* *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Multiple Elements (QuerySelectorAll)</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="3">
+                    <input class="val" value="Txt1" />
+                </MudItem>
+                <MudItem md="3">
+                    <input class="val" value="Txt2" />
+                </MudItem>
+                <MudItem md="3" Class="mt-2">
+                    <MudButton OnClick="GetMultipleVal" Variant="Variant.Filled" Color="Color.Primary">Get Multiple Val</MudButton>
+                </MudItem>
+                <MudItem md="3" Class="mt-2">
+                    <MudText id="content3" Typo="Typo.h6" Color="Color.Info">...</MudText>
+                </MudItem>
+                @* ******************************* *@
+                <MudItem md="3" Class="mt-2">
+                    <MudText id="content4" Typo="Typo.h6" Color="Color.Info">content4</MudText>
+                </MudItem>
+                <MudItem md="3" Class="mt-2">
+                    <MudButton OnClick="SetMultipleVal" Variant="Variant.Filled" Color="Color.Secondary">Set Multiple Val</MudButton>
+                </MudItem>
+                <MudItem md="3">
+                    <input class="val2" />
+                </MudItem>
+                <MudItem md="3">
+                    <input class="val2" />
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+</MudCard>
+
+@code {
+
+    private string Value = "Test Value";
+
+    private string result = string.Empty;
+
+    private async Task GetSingleVal()
+    {
+        try
+        {
+            string val = await Dom.QuerySelector("#val1").ValAsync<string>();
+            await Dom.QuerySelector("#content1").TextAsync(val);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetSingleVal()
+    {
+        try
+        {
+            string val = await Dom.QuerySelector("#content2").TextAsync<string>();
+            await Dom.QuerySelector("#val2").ValAsync(val);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    // ***********************************************
+
+    private async Task GetMultipleVal()
+    {
+        try
+        {
+            var val = await Dom.QuerySelectorAll(".val").ValAsync<IList<string>>();
+            await Dom.QuerySelector("#content3").TextAsync(string.Join(", ", val));
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task SetMultipleVal()
+    {
+        try
+        {
+            var val = await Dom.QuerySelector("#content4").TextAsync<string>();
+            await Dom.QuerySelectorAll(".val2").ValAsync(val);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            result = $"Error: {ex.Message}";
+        }
+    }
+
+}
