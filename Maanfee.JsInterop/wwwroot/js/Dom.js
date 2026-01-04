@@ -1,5 +1,5 @@
 ﻿/*
- * JavaScript Library v0.0.4
+ * JavaScript Library 0.2.0
  *
  *
  *
@@ -44,11 +44,11 @@ export function Text(selector, selectors, Content = null) {
     }
 
     if (Content === null) {
-        // GET mode - return text content
+        // GET
         elements = Array.from(elements);
         return JSON.stringify(elements.map(item => item.textContent || item.innerText || ''));
     } else {
-        // SET mode - set text content
+        // SET 
         elements.forEach(item => {
             item.innerHTML = Content;
         });
@@ -64,11 +64,11 @@ export function HTML(selector, selectors, Content = null) {
     }
 
     if (Content === null) {
-        // GET mode - return text content
+        // GET
         elements = Array.from(elements);
         return JSON.stringify(elements.map(item => item.innerHTML));
     } else {
-        // SET mode - set text content
+        // SET 
         elements.forEach(item => {
             item.innerHTML = Content;
         });
@@ -84,11 +84,11 @@ export function Val(selector, selectors, val = null) {
     }
 
     if (val === null) {
-        // GET mode - return val content
+        // GET 
         elements = Array.from(elements);
         return JSON.stringify(elements.map(item => item.value));
     } else {
-        // SET mode - set val content
+        // SET 
         elements.forEach(item => {
             item.value = val;
         });
@@ -104,15 +104,67 @@ export function Attr(selector, selectors, attributeName = null, attributeValue =
     }
 
     if (attributeValue === null) {
-        // GET mode - return attribute value
+        // GET
         elements = Array.from(elements);
         return JSON.stringify(elements.map(item => item.getAttribute(attributeName)));
     } else {
-        // SET mode - set attribute value
+        // SET 
         elements.forEach(item => {
             item.setAttribute(attributeName, attributeValue);
         });
         return attributeValue;
+    }
+}
+
+export function AddClass(selector, selectors, className) {
+    let elements = _Selector(selector, selectors);
+    if (elements.length === 0) {
+        return null;
+    }
+
+    elements.forEach(el => el.classList.add(className));
+    return className;
+}
+
+export function RemoveClass(selector, selectors, className) {
+    let elements = _Selector(selector, selectors);
+    if (elements.length === 0) return null;
+
+    elements.forEach(el => el.classList.remove(className));
+    return className;
+}
+
+export function ToggleClass(selector, selectors, className) {
+    let elements = _Selector(selector, selectors);
+    if (elements.length === 0) {
+        return null;
+    }
+
+    elements.forEach(el => el.classList.toggle(className));
+    return className;
+}
+
+export function Css(selector, selectors, propertyName, val = null) {
+    let elements = _Selector(selector, selectors);
+    if (elements.length === 0) {
+        return null;
+    }
+
+    if (val === null) {
+        // GET
+        const values = elements.map(el => {
+            const inline = el.style[propertyName];
+            return inline || getComputedStyle(el)[propertyName] || "";
+        });
+
+        // همیشه آرایه JSON برگردون (حتی اگه یه المان باشه)
+        return JSON.stringify(values);
+    } else {
+        // SET
+        elements.forEach(item => {
+            item.style[propertyName] = val;
+        });
+        return val;
     }
 }
 
@@ -127,5 +179,47 @@ export function OnClick(selector, selectors) {
 
     elements.forEach(item => {
         item.click();
-   });
+    });
+}
+
+// ========== Event Listeners ==========
+
+const _eventListeners = new Map();
+
+export function AddEventListener(selector, selectors, eventName, dotNetHelper) {
+    const elements = _Selector(selector, selectors);
+    if (elements.length === 0) return;
+
+    const key = `${selector || selectors}_${eventName}`;
+
+    // حذف قبلی اگه وجود داشت
+    if (_eventListeners.has(key)) {
+        RemoveEventListener(selector, selectors, eventName);
+    }
+
+    const handler = (e) => {
+        const target = e.target;
+        const targetSelector = selector || selectors;
+
+        dotNetHelper.invokeMethodAsync('OnEventFired', eventName, targetSelector);
+    };
+
+    elements.forEach(el => {
+        el.addEventListener(eventName, handler);
+    });
+
+    _eventListeners.set(key, { elements, eventName, handler });
+}
+
+export function RemoveEventListener(selector, selectors, eventName) {
+    const key = `${selector || selectors}_${eventName}`;
+    const stored = _eventListeners.get(key);
+    if (!stored) return;
+
+    const { elements, handler } = stored;
+    elements.forEach(el => {
+        el.removeEventListener(eventName, handler);
+    });
+
+    _eventListeners.delete(key);
 }

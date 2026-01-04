@@ -1,0 +1,57 @@
+﻿@page "/EventListenerView"
+
+<PageTitle>Event Listener</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">OnAsync() - Event Listener</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudTextField @bind-Value="Name" Label="Name" Variant="Variant.Outlined" Class="mb-4" />
+
+            <MudSelect T="string" Label="Interest" @bind-Value="Interest" Class="mb-4" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("Book")">Book</MudSelectItem>
+                <MudSelectItem Value="@("Film")">Film</MudSelectItem>
+                <MudSelectItem Value="@("Music")">Music</MudSelectItem>
+            </MudSelect>
+        </MudCardContent>
+    </MudPaper>
+    <MudPaper Class="pa-4 ma-2">
+        <MudText Typo="Typo.body1">
+            <strong>Name:</strong> @Name<br />
+            <strong>Interest:</strong> @Interest<br />
+        </MudText>
+    </MudPaper>
+</MudCard>
+
+@code {
+    private string Name = string.Empty;
+    private string Interest = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // ثبت رویداد change برای input نام
+            await Dom.QuerySelector("input[aria-label='نام']").OnAsync("input", OnNameChanged);
+
+            // ثبت رویداد change برای MudSelect
+            await Dom.QuerySelector("div.mud-select-input").OnAsync("change", OnInterestChanged);
+        }
+    }
+
+    private async Task OnNameChanged(EventArgs args)
+    {
+        Name = await Dom.QuerySelector("input[aria-label='نام']").ValAsync<string>();
+        StateHasChanged();
+    }
+
+    private async Task OnInterestChanged(EventArgs args)
+    {
+        Interest = await Dom.QuerySelector("input.mud-input-slot").ValAsync<string>();
+        StateHasChanged();
+    }
+
+}

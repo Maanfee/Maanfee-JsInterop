@@ -3,10 +3,168 @@
 <PageTitle>CSS</PageTitle>
 
 <MudCard Class="pa-4 ma-2">
+    <MudGrid Spacing="4">
+        <MudItem md="6">
+            <MudPaper Outlined="true" Square="true" Class="mb-4">
+                <MudCardHeader>
+                    <MudText Typo="Typo.body2" Color="Color.Info">Single Element</MudText>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.FullWidth" />
+                <MudCardContent>
+                    <div id="card1" class="demo-card">
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Large" />
+                        <MudText Typo="Typo.h6" Class="mt-3">Magic Card</MudText>
+                    </div>
 
+                    <MudButton Class="mt-4 mr-2" Color="Color.Primary" Variant="Variant.Filled"
+                               OnClick="AnimateCard">
+                        Animation
+                    </MudButton>
 
+                    <MudButton Class="mt-4 mr-2" Color="Color.Secondary" Variant="Variant.Filled"
+                               OnClick="ResetCard">
+                        Reset
+                    </MudButton>
+
+                    <MudButton Class="mt-4" Color="Color.Success" Variant="Variant.Filled"
+                               OnClick="GetCurrentColor">
+                        Current Color?
+                    </MudButton>
+                </MudCardContent>
+            </MudPaper>
+        </MudItem>
+        <MudItem md="6">
+            <MudPaper Outlined="true" Square="true" Class="mb-4">
+                <MudCardHeader>
+                    <MudText Typo="Typo.body2" Color="Color.Info">Single Element</MudText>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.FullWidth" />
+                <MudCardContent>
+                    <MudGrid Spacing="4">
+                        <MudItem md="6">
+                            <div class="demo-card cards">
+                                <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Magic Card</MudText>
+                            </div>
+                        </MudItem>
+                        <MudItem md="6">
+                            <div class="demo-card cards">
+                                <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Large" />
+                                <MudText Typo="Typo.h6" Class="mt-3">Magic Card</MudText>
+                            </div>
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudButton Class="mt-4 mr-2" Color="Color.Primary" Variant="Variant.Filled"
+                               OnClick="AnimateCards">
+                        Animations
+                    </MudButton>
+
+                    <MudButton Class="mt-4 mr-2" Color="Color.Secondary" Variant="Variant.Filled"
+                               OnClick="ResetCards">
+                        Resets
+                    </MudButton>
+
+                    <MudButton Class="mt-4" Color="Color.Success" Variant="Variant.Filled"
+                               OnClick="GetCurrentColors">
+                        Current Colors
+                    </MudButton>
+                </MudCardContent>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudPaper>
+        @if (!string.IsNullOrEmpty(info))
+        {
+            <MudAlert Severity="Severity.Info" Class="mt-6">
+                <strong>Result:</strong> @info
+            </MudAlert>
+        }
+    </MudPaper>
 </MudCard>
 
-@code {
+<style>
+    .demo-card {
+        width: 200px;
+        height: 200px;
+        padding: 50px;
+        background: linear-gradient(45deg, #2196f3, #21cbf3);
+        color: white;
+        border-radius: 16px;
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+</style>
 
+@code {
+    private string info = string.Empty;
+
+    private async Task AnimateCard()
+    {
+        try
+        {
+            await Dom.QuerySelector("#card1")
+            .CssAsync("transform", "rotate(360deg) scale(1.3)")
+            .CssAsync("background", "linear-gradient(45deg, #ff4081, #f50057)")
+            .CssAsync("border-radius", "50%");
+
+            info = "The card spun in a circle and changed color.";
+        }
+        catch (Exception ex)
+        {
+            info = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task ResetCard()
+    {
+        await Dom.QuerySelector("#card1")
+        .CssAsync("transform", "rotate(0deg) scale(1)")
+        .CssAsync("background", "linear-gradient(45deg, #2196f3, #21cbf3)")
+        .CssAsync("border-radius", "16px");
+
+        info = "Reset to the default state";
+    }
+
+    private async Task GetCurrentColor()
+    {
+        var color = await Dom.QuerySelector("#card1").CssAsync<string>("background");
+        info = $"Current color: background: {color}";
+    }
+
+    // ***************************************************
+
+    private async Task AnimateCards()
+    {
+        try
+        {
+            await Dom.QuerySelectorAll(".cards")
+            .CssAsync("transform", "rotate(360deg) scale(1.3)")
+            .CssAsync("background", "linear-gradient(45deg, #ff4081, #f50057)")
+            .CssAsync("border-radius", "50%");
+
+            info = "The cards spun in a circle and changed color.";
+        }
+        catch (Exception ex)
+        {
+            info = $"Error: {ex.Message}";
+        }
+    }
+
+    private async Task ResetCards()
+    {
+        await Dom.QuerySelectorAll(".cards")
+        .CssAsync("transform", "rotate(0deg) scale(1)")
+        .CssAsync("background", "linear-gradient(45deg, #2196f3, #21cbf3)")
+        .CssAsync("border-radius", "16px");
+
+        info = "Reset to the default state";
+    }
+
+    private async Task GetCurrentColors()
+    {
+        var color = await Dom.QuerySelectorAll(".cards").CssAsync<List<string>>("background");
+        info = $"Current colors: background: {string.Join(" | ", color)}";
+    }
 }

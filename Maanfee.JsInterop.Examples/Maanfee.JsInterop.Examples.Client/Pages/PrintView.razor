@@ -1,0 +1,166 @@
+﻿@page "/PrintView"
+
+<PageTitle>Print</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Print</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudButton OnClick="PrintAsync" Variant="Variant.Filled" Color="Color.Warning">Print</MudButton>
+            @*  
+    <MudButton OnClick="PrintA5" Variant="Variant.Filled" Color="Color.Secondary">Print A5</MudButton>
+    <MudButton OnClick="GeneratePdf" Variant="Variant.Filled" Color="Color.Success">PDF</MudButton>
+    <MudButton OnClick="PrintWithWatermark" Variant="Variant.Filled" Color="Color.Warning">Print with watermark</MudButton>
+    <MudButton OnClick="PrintMultipleCopies" Variant="Variant.Filled" Color="Color.Info">Print 3 copies</MudButton> 
+    *@
+        </MudCardContent>
+        <MudCardActions>
+            @Result
+        </MudCardActions>
+    </MudPaper>
+</MudCard>
+
+<MudPaper id="printContent" Outlined="true" Square="true" Class="pa-4 ma-2">
+    <MudAlert Severity="Severity.Success" Variant="Variant.Filled">The reactor is running at optimum temperature</MudAlert>
+    <MudChip T="string" Icon="@Icons.Material.Filled.VerifiedUser" Color="Color.Info">Verified User</MudChip>
+  
+    <MudTable Items="@SalesData" Dense Hover Bordered Striped >
+        <HeaderContent>
+            <MudTh>ردیف</MudTh>
+            <MudTh>محصول</MudTh>
+            <MudTh>تعداد</MudTh>
+            <MudTh>قیمت</MudTh>
+            <MudTh>جمع</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Id</MudTd>
+            <MudTd>@context.Product</MudTd>
+            <MudTd>@context.Quantity</MudTd>
+            <MudTd>@context.Price.ToString("N0") تومان</MudTd>
+            <MudTd>@context.Total.ToString("N0") تومان</MudTd>
+        </RowTemplate>
+    </MudTable>
+    
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="mt-4">
+        <strong>توضیحات:</strong> این گزارش به صورت خودکار تولید شده است.
+    </MudAlert>
+
+    <div class="no-print alert alert-warning mt-3">
+        این پیغام فقط در صفحه نمایش داده می‌شود و در چاپ ظاهر نمی‌شود.
+    </div>
+</MudPaper>
+
+@code {
+
+    private string Result = string.Empty;
+    private List<SaleItem> SalesData = new();
+
+    protected override void OnInitialized()
+    {
+        SalesData = new List<SaleItem>
+        {
+            new() { Id = 1, Product = "لپ‌تاپ", Quantity = 2, Price = 25000000,  },
+            new() { Id = 2, Product = "موبایل", Quantity = 5, Price = 15000000,  },
+            new() { Id = 3, Product = "تبلت", Quantity = 3, Price = 8000000,  },
+            new() { Id = 4, Product = "مانیتور", Quantity = 4, Price = 5000000,  }
+        };
+    }
+
+    // private async Task PrintElementAsync()
+    // {
+    //     try
+    //     {
+    //         await Print.PrintElementAsync("printContent");
+    //         // await Print.PrintAsync("printContent", new PrintOptions
+    //         // {
+    //         //     PageSize = PageSize.A4,
+    //         //     Orientation = JsInterop.Orientation.Portrait,
+    //         //     Title = "گزارش فروش",
+    //         //     Margin = new PrintMargin { Top = 20, Right = 15, Bottom = 20, Left = 15 }
+    //         // });
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         // await JSRuntime.InvokeVoidAsync("console.error", ex.Message);
+    //         Result = "Error " + ex.Message;
+    //     }
+    // }
+
+    private async Task PrintAsync()
+    {
+        try
+        {
+            await Print.PrintAsync("printContent");
+        }
+        catch (Exception ex)
+        {
+            // await JSRuntime.InvokeVoidAsync("console.error", ex.Message);
+            Result = "Error " + ex.Message;
+        }
+    }
+
+    // private async Task PrintA5()
+    // {
+    //     await PrintService.QuickPrintAsync("printContent", PageSize.A5, JsInterop.Orientation.Portrait);
+    // }
+
+    // private async Task GeneratePdf()
+    // {
+    //     await PrintService.GeneratePDFAsync("printContent", new PrintOptions
+    //     {
+    //         PageSize = PageSize.A4,
+    //         Orientation = JsInterop.Orientation.Landscape,
+    //         FileName = $"گزارش_فروش_{DateTime.Now:yyyyMMdd}.pdf",
+    //         Header = new PrintHeader
+    //         {
+    //             Content = "<h3>شرکت نمونه</h3>",
+    //             ShowPageNumbers = true
+    //         },
+    //         Footer = new PrintHeader
+    //         {
+    //             // Content = $"<div>تاریخ تولید: {DateTime.Now.ToPersianDate()}</div>",
+    //             Content = $"<div>تاریخ تولید: {DateTime.Now.ToShortDateString()}</div>",
+    //             ShowPageNumbers = true
+    //         }
+    //     });
+    // }
+
+    // private async Task PrintWithWatermark()
+    // {
+    //     await PrintService.PrintElementAsync("printContent", new PrintOptions
+    //     {
+    //         PageSize = PageSize.A4,
+    //         Copies = 1,
+    //         Watermark = new WatermarkOptions
+    //         {
+    //             Text = "محرمانه",
+    //             Color = "rgba(255,0,0,0.1)",
+    //             FontSize = 60
+    //         }
+    //     });
+    // }
+
+    // private async Task PrintMultipleCopies()
+    // {
+    //     await PrintService.PrintElementAsync("printContent", new PrintOptions
+    //     {
+    //         PageSize = PageSize.A4,
+    //         Copies = 3,
+    //         Margin = new PrintMargin { Top = 25, Right = 20, Bottom = 25, Left = 20 },
+    //         IgnoreElements = new[] { ".no-print", ".alert-warning" }
+    //     });
+    // }
+
+    private class SaleItem
+    {
+        public int Id { get; set; }
+        public string? Product { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal Total => Quantity * Price;
+    }
+
+}

@@ -9,6 +9,8 @@ namespace Maanfee.JsInterop
             services.AddTransient<Dom>();
             services.AddTransient<LocalStorage>();
             services.AddTransient<Fullscreen>();
+            services.AddScoped<Print>();
+            services.AddScoped<FileDownload>();
 
             return services;
         }

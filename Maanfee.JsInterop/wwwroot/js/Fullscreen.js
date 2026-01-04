@@ -1,5 +1,5 @@
 ﻿/*
- * JavaScript Screen Library V 2.0.0
+ * JavaScript Fullscreen Library 2.0.0
  *
  *
  *

@@ -1,0 +1,93 @@
+﻿@page "/DownloadView"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Download</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Download Stream</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Info"
+                       OnClick="GenerateAndDownloadText"
+                       EndIcon="@Icons.Material.Filled.Download">
+                Download Text File
+            </MudButton>
+        </MudCardContent>
+    </MudPaper>
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Info">Download Url</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Success"
+                       OnClick="DownloadFromDirectUrl"
+                       EndIcon="@Icons.Material.Filled.Download">
+                Download from url
+            </MudButton>
+        </MudCardContent>
+    </MudPaper>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <MudAlert Severity="@alertSeverity" Class="mt-4">
+            @statusMessage
+        </MudAlert>
+    }
+</MudCard>
+
+@code {
+    private string statusMessage = "";
+    private Severity alertSeverity = Severity.Info;
+
+    private async Task GenerateAndDownloadText()
+    {
+        try
+        {
+            // تولید فایل متنی ساده
+            var textContent = $"تاریخ تولید: {DateTime.Now}\n";
+            textContent += "این یک فایل نمونه است.\n";
+            textContent += "محتوا می‌تواند از سرویس‌های مختلف تولید شود.";
+
+            var streamRef = new DotNetStreamReference(
+                new MemoryStream(System.Text.Encoding.UTF8.GetBytes(textContent))
+            );
+
+            await FileDownload.DownloadFileFromStream($"Sample-{DateTime.Now:yyyyMMdd_HHmmss}.txt", streamRef);
+
+            statusMessage = "File downloaded";
+            alertSeverity = Severity.Success;
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error: {ex.Message}";
+            alertSeverity = Severity.Error;
+        }
+    }
+
+    // ******************************************************
+
+    private string directUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
+
+    private async Task DownloadFromDirectUrl()
+    {
+        try
+        {
+            await FileDownload.DownloadFileFromUrl("dummy.pdf", directUrl);
+
+            statusMessage = "File downloaded";
+            alertSeverity = Severity.Success;
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error: {ex.Message}";
+            alertSeverity = Severity.Error;
+        }
+    }
+}

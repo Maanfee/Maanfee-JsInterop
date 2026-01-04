@@ -1,5 +1,5 @@
 ﻿/*
- * JavaScript Local Storage Library V 1.0.0
+ * JavaScript Local Storage Library 1.0.0
  *
  *
  *

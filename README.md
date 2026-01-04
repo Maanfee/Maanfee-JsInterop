@@ -1,5 +1,5 @@
 ﻿# Maanfee JsInterop
-**Maanfee JsInterop** is a lightweight JavaScript interop library for Blazor applications that provides jQuery-like DOM manipulation capabilities through C#.
+**Maanfee JsInterop** is a JavaScript interop library for Blazor applications that provides jQuery-like DOM manipulation capabilities through C#.
 
 # 🎯Features
 
@@ -60,24 +60,3 @@
 - `LengthAsync()` - Get number of stored items
 - `SetAsync<T>(string key, T value)` - Store value with key
 - `RemoveAsync(string key)` - Remove item by key
-
-## Extension Methods (DomHelpers)
-
-### Text Operations
-- `TextAsync(this Task<Dom> dom, string text)` - Set text content
-- `TextAsync<T>(this Task<Dom> dom)` - Get text content
-
-### HTML Operations
-- `HTMLAsync(this Task<Dom> dom, string html)` - Set HTML content
-- `HTMLAsync<T>(this Task<Dom> dom)` - Get HTML content
-
-### Value Operations
-- `ValAsync(this Task<Dom> dom, string value)` - Set input value
-- `ValAsync<T>(this Task<Dom> dom)` - Get input value
-
-### Attribute Operations
-- `AttrAsync<T>(this Task<Dom> dom, string attributeName)` - Get attribute value
-- `AttrAsync(this Task<Dom> dom, string attributeName, string attributeValue)` - Set attribute value
-
-### Event Operations
-- `ClickAsync(this Task<Dom> dom)` - Trigger click event

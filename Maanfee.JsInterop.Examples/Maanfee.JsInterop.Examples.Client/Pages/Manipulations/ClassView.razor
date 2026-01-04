@@ -1,0 +1,144 @@
+﻿@page "/ClassView"
+
+<PageTitle>Class</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudGrid Spacing="4">
+        <MudItem md="6">
+            <MudPaper Outlined="true" Square="true" Class="mb-4">
+                <MudCardHeader>
+                    <MudText Typo="Typo.body2" Color="Color.Info">Single Element</MudText>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.FullWidth" />
+                <MudCardContent>
+                    <div id="box1" class="box">Box</div>
+
+                    <MudButton Class="mt-3 mr-2" Color="Color.Success" Variant="Variant.Filled"
+                               OnClick="() => AddClassSingle()">
+                        Add 
+                    </MudButton>
+
+                    <MudButton Class="mt-3 mr-2" Color="Color.Error" Variant="Variant.Filled"
+                               OnClick="() => RemoveClassSingle()">
+                        Remove 
+                    </MudButton>
+
+                    <MudButton Class="mt-3" Color="Color.Warning" Variant="Variant.Filled"
+                               OnClick="() => ToggleClassSingle()">
+                        Toggle 
+                    </MudButton>
+                </MudCardContent>
+            </MudPaper>
+        </MudItem>
+        <MudItem md="6">
+            <MudPaper Outlined="true" Square="true" Class="mb-4">
+                <MudCardHeader>
+                    <MudText Typo="Typo.body2" Color="Color.Info">Multiple Element</MudText>
+                </MudCardHeader>
+                <MudDivider DividerType="DividerType.FullWidth" />
+                <MudCardContent>
+                    <div class="item">Item 1</div>
+                    <div class="item">Item 2</div>
+                    <div class="item">Item 3</div>
+
+                    <MudButton Class="mt-3" Color="Color.Info" Variant="Variant.Filled"
+                               OnClick="HighlightAll">
+                        Add
+                    </MudButton>
+
+                    <MudButton Class="mt-3 ml-2" Color="Color.Dark" Variant="Variant.Filled"
+                               OnClick="RemoveHighlightAll">
+                        Remove 
+                    </MudButton>
+                    <MudButton Class="mt-3" Color="Color.Warning" Variant="Variant.Filled"
+                               OnClick="() => ToggleHighlightAll()">
+                        Toggle 
+                    </MudButton>
+                </MudCardContent>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+    <MudPaper>
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <MudAlert Severity="Severity.Info" Class="mt-4">
+                @message
+            </MudAlert>
+        }
+    </MudPaper>
+</MudCard>
+
+<style>
+    .box {
+        width: 200px;
+        height: 100px;
+        background: #eee;
+        border: 2px solid #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .success-bg {
+        background: #4caf50 !important;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .item {
+        padding: 12px;
+        margin: 8px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        transition: background 0.4s;
+    }
+
+    .highlight {
+        background: #ffeb3b !important;
+        font-weight: bold;
+    }
+</style>
+
+@code {
+    private string message = "";
+
+    private async Task AddClassSingle()
+    {
+        await Dom.QuerySelector("#box1").AddClassAsync("success-bg");
+        message = "Class success-bg added";
+    }
+
+    private async Task RemoveClassSingle()
+    {
+        await Dom.QuerySelector("#box1").RemoveClassAsync("success-bg");
+        message = "Class deleted";
+    }
+
+    private async Task ToggleClassSingle()
+    {
+        await Dom.QuerySelector("#box1").ToggleClassAsync("success-bg");
+        message = "class changed";
+    }
+
+    // *******************************
+
+    private async Task HighlightAll()
+    {
+        await Dom.QuerySelectorAll(".item").AddClassAsync("highlight");
+        message = "All the items updated";
+    }
+
+    private async Task RemoveHighlightAll()
+    {
+        await Dom.QuerySelectorAll(".item").RemoveClassAsync("highlight");
+        message = "All the highlights removed";
+    }
+
+    private async Task ToggleHighlightAll()
+    {
+        await Dom.QuerySelectorAll(".item").ToggleClassAsync("highlight");
+        message = "All the highlights changed";
+    }
+}
