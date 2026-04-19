@@ -30,9 +30,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
-    <PackageReference Include="Microsoft.JSInterop" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.*" />
+    <PackageReference Include="Microsoft.JSInterop" Version="10.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,5 +53,5 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-  
+
 </Project>
