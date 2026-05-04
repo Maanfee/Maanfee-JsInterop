@@ -11,6 +11,7 @@ namespace Maanfee.JsInterop
             services.AddTransient<Fullscreen>();
             services.AddScoped<Print>();
             services.AddScoped<FileDownload>();
+            services.AddScoped<Clipboard>();
 
             return services;
         }

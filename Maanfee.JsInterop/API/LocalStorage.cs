@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.JSInterop;
 using System.Text.Json;
 
 namespace Maanfee.JsInterop
@@ -8,6 +9,18 @@ namespace Maanfee.JsInterop
         public LocalStorage(IJSRuntime JSRuntime) : base(JSRuntime, "Maanfee.JsInterop", "Storage.js")
         {
         }
+
+        static LocalStorage()
+        {
+            _defaultOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = false,
+            };
+        }
+
+        private static JsonSerializerOptions _defaultOptions;
 
         public new async ValueTask DisposeAsync()
         {
@@ -42,7 +55,8 @@ namespace Maanfee.JsInterop
             await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Get", Key);
 
-            return data == null ? default(T) : JsonSerializer.Deserialize<T>(data);
+            //return data == null ? default(T) : JsonSerializer.Deserialize<T>(data);
+            return data == null ? default(T) : JsonSerializer.Deserialize<T>(data, _defaultOptions); 
         }
 
         public async Task<List<string>> KeysAsync()
@@ -50,7 +64,8 @@ namespace Maanfee.JsInterop
             await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Keys");
 
-            return data == null ? new List<string>() : JsonSerializer.Deserialize<List<string>>(data);
+            //return data == null ? new List<string>() : JsonSerializer.Deserialize<List<string>>(data);
+            return data == null ? new List<string>() : JsonSerializer.Deserialize<List<string>>(data, _defaultOptions);
         }
 
         public async Task<int?> LengthAsync()
@@ -64,13 +79,21 @@ namespace Maanfee.JsInterop
         public async Task SetAsync<T>(string Key, T value)
         {
             await EnsureModuleLoaded();
-            await _Module.InvokeVoidAsync("Set", Key, JsonSerializer.Serialize(value));
+            //await _Module.InvokeVoidAsync("Set", Key, JsonSerializer.Serialize(value));
+            await _Module.InvokeVoidAsync("Set", Key, JsonSerializer.Serialize(value, _defaultOptions)); 
         }
 
         public async Task RemoveAsync(string Key)
         {
             await EnsureModuleLoaded();
             await _Module.InvokeVoidAsync("Remove", Key);
+        }
+
+        // ********************************************
+
+        public static void ConfigureJsonOptions(Action<JsonSerializerOptions> configure)
+        {
+            configure?.Invoke(_defaultOptions);
         }
     }
 }

@@ -16,7 +16,7 @@
     <Copyright>Copyright (c) 2025-2026 Maanfee</Copyright>
     <Authors>Maanfee Team (MF)</Authors>
     <Company>Maanfee</Company>
-    <Version>1.10.0</Version>
+    <Version>1.13.0</Version>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

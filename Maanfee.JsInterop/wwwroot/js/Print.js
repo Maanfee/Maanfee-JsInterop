@@ -1,5 +1,5 @@
 ﻿/*
- * JavaScript Print Library 0.0.0
+ * JavaScript Print Library 1.0.0
  *
  *
  *

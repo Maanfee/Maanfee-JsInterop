@@ -1,0 +1,67 @@
+﻿@page "/ClipboardView"
+
+<PageTitle>ClipboardView</PageTitle>
+
+<MudCard Class="pa-4 ma-2">
+    <MudText Typo="Typo.h6" Color="Color.Error" Class="mb-4">Clipboard Management</MudText>
+    @* *************************************** *@
+    <MudPaper Outlined="true" Square="true" Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.body2" Color="Color.Primary">Clipboard</MudText>
+        </MudCardHeader>
+        <MudDivider DividerType="DividerType.FullWidth" />
+        <MudCardContent>
+            <MudGrid>
+                <MudItem md="4">
+                    <MudTextField @bind-Value="ClipboardText" Label="Clipboard Text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                </MudItem>
+                <MudItem md="12">
+                    <MudButton OnClick="CopyToClipboard" Variant="Variant.Filled" Color="Color.Info">
+                        Copy to clipboard
+                    </MudButton>
+                    <MudButton OnClick="PasteFromClipboard" Variant="Variant.Filled" Color="Color.Success">
+                        Paste from clipboard
+                    </MudButton>
+                </MudItem>
+                @if (!string.IsNullOrEmpty(Result))
+                {
+                    <MudItem md="12">
+                        <MudAlert Severity="Severity.Success">@Result</MudAlert>
+                    </MudItem>
+                }
+                @if (!string.IsNullOrEmpty(Error))
+                {
+                    <MudItem md="12">
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@Error</MudAlert>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudCardContent>
+    </MudPaper>
+</MudCard>
+
+@code {
+
+    private string Result = string.Empty;
+    private string Error = string.Empty;
+    private string ClipboardText = "Text for Clipbaord";
+
+    private async Task CopyToClipboard()
+    {
+        bool success = await Clipboard.WriteTextAsync(ClipboardText);
+        if (success)
+        {
+            Result = $"{ClipboardText} copied to clipboard";
+        }
+    }
+
+    private async Task PasteFromClipboard()
+    {
+        string text = await Clipboard.ReadTextAsync();
+        if (!string.IsNullOrEmpty(text))
+        {
+            Result = text;
+        }
+    }
+}
+
