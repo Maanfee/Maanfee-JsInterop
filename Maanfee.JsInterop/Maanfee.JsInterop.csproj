@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <TieredPGO>true</TieredPGO>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
@@ -30,9 +30,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.*" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.*" />
-    <PackageReference Include="Microsoft.JSInterop" Version="10.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
+    <PackageReference Include="Microsoft.JSInterop" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>

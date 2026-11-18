@@ -19,12 +19,13 @@ namespace Maanfee.JsInterop
         private readonly string _NameSpace = string.Empty;
         private readonly string _JsFileName = string.Empty;
 
-        protected virtual async Task EnsureModuleLoaded()
+        private Task _LoadTask;
+
+        protected virtual Task EnsureModuleLoaded() => _LoadTask ??= LoadModule();
+
+        private async Task LoadModule()
         {
-            if (_Module == null)
-            {
-                _Module = await _JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/{_NameSpace}/js/{_JsFileName}");
-            }
+            _Module = await _JSRuntime.InvokeAsync<IJSObjectReference>("import", $"./_content/{_NameSpace}/js/{_JsFileName}");
         }
 
         // ********************************************

@@ -56,6 +56,7 @@ namespace Maanfee.JsInterop
 
         public async Task<T> TextAsync<T>()
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Text", selector, selectors, null);
 
             if (!string.IsNullOrEmpty(data))
@@ -73,6 +74,7 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> TextAsync(string Text)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("Text", selector, selectors, Text);
             return this;
         }
@@ -83,6 +85,7 @@ namespace Maanfee.JsInterop
 
         public async Task<T> HTMLAsync<T>()
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("HTML", selector, selectors, null);
 
             if (!string.IsNullOrEmpty(data))
@@ -100,6 +103,7 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> HTMLAsync(string Text)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("HTML", selector, selectors, Text);
             return this;
         }
@@ -110,6 +114,7 @@ namespace Maanfee.JsInterop
 
         public async Task<T> ValAsync<T>()
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Val", selector, selectors, null);
 
             if (!string.IsNullOrEmpty(data))
@@ -127,6 +132,7 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> ValAsync(string Val)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("Val", selector, selectors, Val);
             return this;
         }
@@ -139,6 +145,7 @@ namespace Maanfee.JsInterop
 
         public async Task<T> AttrAsync<T>(string AttributeName)
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Attr", selector, selectors, AttributeName, null);
 
             if (!string.IsNullOrEmpty(data))
@@ -156,6 +163,7 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> AttrAsync(string AttributeName, string AttributeValue)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("Attr", selector, selectors, AttributeName, AttributeValue);
             return this;
         }
@@ -166,30 +174,35 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> AddClassAsync(string className)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("AddClass", selector, selectors, className);
             return this;
         }
 
         public async Task<Dom> RemoveClassAsync(string className)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("RemoveClass", selector, selectors, className);
             return this;
         }
 
         public async Task<Dom> ToggleClassAsync(string className)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("ToggleClass", selector, selectors, className);
             return this;
         }
 
         public async Task<bool> HasClassAsync(string className)
         {
+            await EnsureModuleLoaded();
             var result = await _Module.InvokeAsync<string>("HasClass", selector, selectors, className);
             return result == "true";
         }
 
         public async Task<IList<bool>> HasClassAllAsync(string className)
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("HasClass", selector, selectors, className);
             if (string.IsNullOrEmpty(data))
                 return new List<bool>();
@@ -204,12 +217,14 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> CssAsync(string PropertyName, string Value)
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<string>("Css", selector, selectors, PropertyName, Value);
             return this;
         }
 
         public async Task<T> CssAsync<T>(string PropertyName)
         {
+            await EnsureModuleLoaded();
             var data = await _Module.InvokeAsync<string>("Css", selector, selectors, PropertyName);
 
             if (!string.IsNullOrEmpty(data))
@@ -241,6 +256,7 @@ namespace Maanfee.JsInterop
 
         public async Task<Dom> ClickAsync()
         {
+            await EnsureModuleLoaded();
             await _Module.InvokeAsync<Task>("OnClick", selector, selectors);
             return this;
         }
@@ -268,6 +284,7 @@ namespace Maanfee.JsInterop
             _eventHelpers[key] = dotNetRef;
             helper.Callback = callback;
 
+            await EnsureModuleLoaded();
             await _Module.InvokeVoidAsync("AddEventListener", selector, selectors, eventName, dotNetRef);
 
             return this;
@@ -278,6 +295,7 @@ namespace Maanfee.JsInterop
             var key = $"{selector ?? selectors}_{eventName}";
             if (_eventHelpers.TryGetValue(key, out var dotNetRef))
             {
+                await EnsureModuleLoaded();
                 await _Module.InvokeVoidAsync("RemoveEventListener", selector, selectors, eventName);
                 dotNetRef.Dispose();
                 _eventHelpers.Remove(key);
